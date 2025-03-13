@@ -7,8 +7,8 @@ from email.mime.text import MIMEText
 app = Flask(__name__)
 
 # 🔹 ДАННЫЕ ДЛЯ ТЕЛЕГРАМА
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")  # Хранить в переменных окружения!
-ADMIN_CHAT_ID = -1001234567890  # ID группы операторов
+TELEGRAM_TOKEN = os.getenv7552421757:AAGgXf_YQ23TnoA8td1wiks9BorGNdXKrzM  # Хранить в переменных окружения!
+
 
 # 🔹 ДАННЫЕ ДЛЯ EMAIL (Хранить в Railway Variables)
 SMTP_SERVER = "smtp.mail.ru"  # Используем Mail.ru
@@ -28,9 +28,6 @@ def telegram_webhook():
 
         # 🔹 Отправляем в Jivo
         send_to_jivo_email(user_text)
-
-        # 🔹 Оповещаем операторов в Telegram
-        send_to_telegram_group(f"📨 Запрос клиента отправлен в Jivo:\n\n{user_text}")
 
     return jsonify({"status": "ok"})
 
