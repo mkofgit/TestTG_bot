@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 TELEGRAM_TOKEN = "7552421757:AAGgXf_YQ23TnoA8td1wiks9BorGNdXKrzM"
 JIVO_API_URL = "https://api.jivosite.com/webhooks"
-PROXY_SERVER_URL = "https://myproxy.up.railway.app/proxy"  # Замените на свой URL
+PROXY_SERVER_URL = "https://testtgbot-production.up.railway.app/proxy"  # Замените на свой URL
 
 # Частые вопросы и автоответы
 FAQ = {
