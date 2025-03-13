@@ -62,16 +62,21 @@ def send_operator_button(chat_id):
     requests.post(url, json=payload)
 
 # Функция отправки запроса в прокси-сервер для Jivo
+import json
+
 def send_to_jivo_proxy(user_id, message):
     payload = {"message": message}
     headers = {"Content-Type": "application/json"}
     
     try:
-        response = requests.post(PROXY_SERVER_URL, json=payload, headers=headers)
-        print(f"Отправлено в прокси: {payload}")
-        print(f"Ответ прокси: {response.status_code}, {response.text}")
-    except Exception as e:
-        print(f"Ошибка отправки в прокси: {str(e)}")
+        response = requests.post(PROXY_SERVER_URL, json=payload, headers=headers, timeout=5)
+        response_data = response.json() if response.status_code == 200 else response.text
+        print(f"✅ Отправлено в прокси: {json.dumps(payload, ensure_ascii=False)}")
+        print(f"🔄 Ответ прокси: {response.status_code}, {response_data}")
+    except requests.Timeout:
+        print("⏳ Ошибка: Превышено время ожидания ответа от прокси")
+    except requests.RequestException as e:
+        print(f"🚨 Ошибка отправки в прокси: {str(e)}")
 
 # Функция отправки приветственного сообщения с кнопками
 def send_welcome_message(chat_id):
