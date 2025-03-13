@@ -49,7 +49,7 @@ def send_to_jivo_email(user_message):
         print("✅ Email отправлен в Jivo")
     except Exception as e:
         print(f"🚨 Ошибка отправки Email: {str(e)}")
-    
-    if __name__ == '__main__':
+
+if __name__ == '__main__':
     from waitress import serve
     serve(app, host="0.0.0.0", port=5000)
