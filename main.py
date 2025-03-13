@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 import requests
+import json
 
 app = Flask(__name__)
 
@@ -14,7 +15,6 @@ FAQ = {
     "поддержка": "Свяжитесь с нашей поддержкой через кнопку 'Связаться с оператором'."
 }
 
-# Главная функция обработки сообщений от Telegram
 @app.route('/webhook', methods=['POST'])
 def telegram_webhook():
     data = request.json
@@ -43,6 +43,44 @@ def telegram_webhook():
     
     return jsonify({"status": "ok"})
 
+@app.route('/proxy', methods=['POST'])
+def proxy_to_jivo():
+    try:
+        data = request.json
+        print(f"📥 Получен запрос: {data}")
+
+        user_message = data.get("message", "Без сообщения")
+
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+            "Content-Type": "application/json"
+        }
+
+        payload = {
+            "event_name": "chat_accepted",
+            "data": {
+                "visitor": {
+                    "name": "Telegram User",
+                    "phone": "N/A",
+                    "email": "N/A"
+                },
+                "message": user_message
+            }
+        }
+
+        response = requests.post(JIVO_API_URL, json=payload, headers=headers, timeout=5)
+        print(f"✅ Отправлено в Jivo: {payload}")
+        print(f"🔄 Ответ Jivo: {response.status_code}, {response.text}")
+
+        return jsonify({"status": response.status_code, "response": response.text})
+
+    except requests.Timeout:
+        print("⏳ Ошибка: Превышено время ожидания ответа от Jivo")
+        return jsonify({"error": "Превышено время ожидания ответа от Jivo"}), 504
+    except Exception as e:
+        print(f"🚨 Ошибка в прокси: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
 # Функция отправки сообщений в Telegram
 def send_message(chat_id, text):
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
@@ -62,8 +100,6 @@ def send_operator_button(chat_id):
     requests.post(url, json=payload)
 
 # Функция отправки запроса в прокси-сервер для Jivo
-import json
-
 def send_to_jivo_proxy(user_id, message):
     payload = {"message": message}
     headers = {"Content-Type": "application/json"}
@@ -77,22 +113,6 @@ def send_to_jivo_proxy(user_id, message):
         print("⏳ Ошибка: Превышено время ожидания ответа от прокси")
     except requests.RequestException as e:
         print(f"🚨 Ошибка отправки в прокси: {str(e)}")
-
-# Функция отправки приветственного сообщения с кнопками
-def send_welcome_message(chat_id):
-    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
-    payload = {
-        "chat_id": chat_id,
-        "text": "Добро пожаловать! Выберите действие:",
-        "parse_mode": "HTML",
-        "reply_markup": {
-            "inline_keyboard": [
-                [{"text": "📌 Частые вопросы", "callback_data": "faq"}],
-                [{"text": "📞 Связаться с оператором", "callback_data": "ask_jivo"}]
-            ]
-        }
-    }
-    requests.post(url, json=payload)
 
 if __name__ == '__main__':
     from waitress import serve
