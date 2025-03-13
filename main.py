@@ -7,7 +7,7 @@ from email.mime.text import MIMEText
 app = Flask(__name__)
 
 # 🔹 ДАННЫЕ ДЛЯ ТЕЛЕГРАМА
-TELEGRAM_TOKEN = os.getenv7552421757:AAGgXf_YQ23TnoA8td1wiks9BorGNdXKrzM  # Хранить в переменных окружения!
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")  # Хранить в переменных окружения!
 
 
 # 🔹 ДАННЫЕ ДЛЯ EMAIL (Хранить в Railway Variables)
