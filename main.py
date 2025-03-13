@@ -84,8 +84,15 @@ def send_operator_button(chat_id):
 
 # Функция отправки сообщений в Jivo
 def send_to_jivo(message):
-    payload = {"text": message}
-    requests.post(JIVO_API_URL, json=payload)
+    headers = {"Content-Type": "application/json"}
+    payload = {
+        "event_name": "chat_message",
+        "data": {
+            "message": message
+        }
+    }
+    response = requests.post(JIVO_API_URL, json=payload, headers=headers)
+    print("Jivo response:", response.text)
 
 if __name__ == '__main__':
     from waitress import serve
