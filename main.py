@@ -6,7 +6,7 @@ from email.mime.text import MIMEText
 
 # 🔹 Принудительно задаем переменные окружения
 os.environ["TELEGRAM_TOKEN"] = "7552421757:AAGgXf_YQ23TnoA8td1wiks9BorGNdXKrzM"
-os.environ["SMTP_PASSWORD"] = "hhdgbymlgtocqcsy"
+os.environ["SMTP_PASSWORD"] = "9rzs8RfBQvT9xr87Mmr3"
 
 # 🔹 Загружаем переменные окружения
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
