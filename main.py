@@ -9,11 +9,11 @@ TELEGRAM_TOKEN = "7552421757:AAGgXf_YQ23TnoA8td1wiks9BorGNdXKrzM"
 ADMIN_CHAT_ID = -1001234567890  # ID группы операторов (узнать через @userinfobot)
 
 # 🔹 ДАННЫЕ ДЛЯ EMAIL
-SMTP_SERVER = "smtp.gmail.com"  # Указать нужный SMTP-сервер
+SMTP_SERVER = "smtp.mailgun.org"  # Указать нужный SMTP-сервер
 SMTP_PORT = 587
-SMTP_LOGIN = "your_email@gmail.com"  # Твоя почта
-SMTP_PASSWORD = "your_password"  # Пароль приложения (НЕ обычный пароль!)
-JIVO_EMAIL = "support@jivo.com"  # Почта, куда слать в Jivo
+SMTP_LOGIN = "unityspace2024@mail.ru"  # Твоя почта
+SMTP_PASSWORD = "ghjcnhfycndf2024"  # Пароль приложения (НЕ обычный пароль!)
+JIVO_EMAIL = "idmurgpsfrtnjivosite@jivo-mail.com"  # Почта, куда слать в Jivo
 
 @app.route('/telegram_webhook', methods=['POST'])
 def telegram_webhook():
