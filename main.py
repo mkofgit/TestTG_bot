@@ -22,6 +22,10 @@ def telegram_webhook():
         chat_id = data["message"]["chat"]["id"]
         text = data["message"].get("text", "").lower()
         
+        if text == "/start":
+            send_welcome_message(chat_id)
+            return jsonify({"status": "ok"})
+        
         # Если вопрос есть в FAQ, отправляем автоответ
         for keyword, answer in FAQ.items():
             if keyword in text:
@@ -40,6 +44,21 @@ def telegram_webhook():
             send_message(chat_id, "Ваш запрос отправлен оператору. Ожидайте ответа!")
     
     return jsonify({"status": "ok"})
+
+# Функция отправки приветственного сообщения с кнопками
+def send_welcome_message(chat_id):
+    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+    payload = {
+        "chat_id": chat_id,
+        "text": "Добро пожаловать! Выберите действие:",
+        "reply_markup": {
+            "inline_keyboard": [
+                [{"text": "Частые вопросы", "callback_data": "faq"}],
+                [{"text": "Связаться с оператором", "callback_data": "ask_jivo"}]
+            ]
+        }
+    }
+    requests.post(url, json=payload)
 
 # Функция отправки сообщений в Telegram
 def send_message(chat_id, text):
@@ -66,3 +85,4 @@ def send_to_jivo(message):
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000)
+
