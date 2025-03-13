@@ -83,6 +83,8 @@ def send_operator_button(chat_id):
     requests.post(url, json=payload)
 
 # Функция отправки сообщений в Jivo
+import json
+
 def send_to_jivo(message):
     headers = {"Content-Type": "application/json"}
     payload = {
@@ -91,8 +93,14 @@ def send_to_jivo(message):
             "message": message
         }
     }
-    response = requests.post(JIVO_API_URL, json=payload, headers=headers)
-    print("Jivo response:", response.text)
+    
+    try:
+        response = requests.post(JIVO_API_URL, json=payload, headers=headers)
+        response_data = response.json() if response.status_code == 200 else response.text
+        print(f"Отправлено в Jivo: {json.dumps(payload, ensure_ascii=False)}")
+        print(f"Ответ Jivo: {response.status_code}, {response_data}")
+    except Exception as e:
+        print(f"Ошибка отправки в Jivo: {str(e)}")
 
 if __name__ == '__main__':
     from waitress import serve
