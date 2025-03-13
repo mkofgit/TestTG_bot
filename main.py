@@ -1,19 +1,21 @@
 import smtplib
+import os
+import requests
 from flask import Flask, request, jsonify
 from email.mime.text import MIMEText
 
 app = Flask(__name__)
 
 # 🔹 ДАННЫЕ ДЛЯ ТЕЛЕГРАМА
-TELEGRAM_TOKEN = "7552421757:AAGgXf_YQ23TnoA8td1wiks9BorGNdXKrzM"
-ADMIN_CHAT_ID = -1001234567890  # ID группы операторов (узнать через @userinfobot)
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")  # Хранить в переменных окружения!
+ADMIN_CHAT_ID = -1001234567890  # ID группы операторов
 
-# 🔹 ДАННЫЕ ДЛЯ EMAIL
-SMTP_SERVER = "smtp.mailgun.org"  # Указать нужный SMTP-сервер
+# 🔹 ДАННЫЕ ДЛЯ EMAIL (Хранить в Railway Variables)
+SMTP_SERVER = "smtp.mail.ru"  # Используем Mail.ru
 SMTP_PORT = 587
 SMTP_LOGIN = "unityspace2024@mail.ru"  # Твоя почта
 SMTP_PASSWORD = "ghjcnhfycndf2024"  # Пароль приложения (НЕ обычный пароль!)
-JIVO_EMAIL = "idmurgpsfrtnjivosite@jivo-mail.com"  # Почта, куда слать в Jivo
+JIVO_EMAIL = "idmurgpsfrtnjivosite@jivo-mail.com"  # Email-канал Jivo
 
 @app.route('/telegram_webhook', methods=['POST'])
 def telegram_webhook():
