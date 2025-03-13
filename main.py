@@ -86,10 +86,17 @@ def send_operator_button(chat_id):
 import json
 
 def send_to_jivo(message):
-    headers = {"Content-Type": "application/json"}
+    headers = {
+        "Content-Type": "application/json"
+    }
     payload = {
-        "event_name": "chat_message",
+        "event_name": "chat_accepted",
         "data": {
+            "visitor": {
+                "name": "Telegram User",
+                "phone": "N/A",
+                "email": "N/A"
+            },
             "message": message
         }
     }
