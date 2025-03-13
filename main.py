@@ -1,8 +1,20 @@
-import smtplib
 import os
+import smtplib
 import requests
 from flask import Flask, request, jsonify
 from email.mime.text import MIMEText
+
+# 🔹 Принудительно задаем переменные окружения
+os.environ["TELEGRAM_TOKEN"] = "7552421757:AAGgXf_YQ23TnoA8td1wiks9BorGNdXKrzM"
+os.environ["SMTP_PASSWORD"] = "hhdgbymlgtocqcsy"
+
+# 🔹 Загружаем переменные окружения
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
+
+# 🔹 Выводим значения для проверки
+print(f"Загруженный Telegram Token: {TELEGRAM_TOKEN}")
+print(f"Загруженный SMTP Password: {SMTP_PASSWORD}")
 
 app = Flask(__name__)
 
@@ -15,10 +27,6 @@ SMTP_PORT = 587
 SMTP_LOGIN = "unityspace2024@mail.ru"  # Твоя почта
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")  # Пароль приложения
 JIVO_EMAIL = "idmurgpsfrtnjivosite@jivo-mail.com"  # Email-канал Jivo
-
-# Вывод для проверки
-print(f"Telegram Token: {TELEGRAM_TOKEN}")
-print(f"SMTP Password: {SMTP_PASSWORD}")
 
 @app.route('/telegram_webhook', methods=['POST'])
 def telegram_webhook():
