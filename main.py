@@ -4,8 +4,7 @@ import requests
 app = Flask(__name__)
 
 TELEGRAM_TOKEN = "7552421757:AAGgXf_YQ23TnoA8td1wiks9BorGNdXKrzM"
-JIVO_API_URL = "https://api.jivosite.com/integration/webhooks"
-JIVO_API_URL = "ВАШ_URL_ДЛЯ_WEBHOOK_В_JIVO"
+JIVO_API_URL = "testtgbot-production.up.railway.app"
 
 # Частые вопросы и автоответы
 FAQ = {
