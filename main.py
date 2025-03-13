@@ -49,13 +49,7 @@ def send_to_jivo_email(user_message):
         print("✅ Email отправлен в Jivo")
     except Exception as e:
         print(f"🚨 Ошибка отправки Email: {str(e)}")
-
-def send_to_telegram_group(text):
-    """Оповещение операторов в Telegram-группе"""
-    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
-    payload = {"chat_id": ADMIN_CHAT_ID, "text": text, "parse_mode": "Markdown"}
-    requests.post(url, json=payload)
-
-if __name__ == '__main__':
+    
+    if __name__ == '__main__':
     from waitress import serve
     serve(app, host="0.0.0.0", port=5000)
