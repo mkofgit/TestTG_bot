@@ -1,32 +1,16 @@
-import os
 import smtplib
-import requests
+import os
 from flask import Flask, request, jsonify
 from email.mime.text import MIMEText
 
-# 🔹 Принудительно задаем переменные окружения
-os.environ["TELEGRAM_TOKEN"] = "7552421757:AAGgXf_YQ23TnoA8td1wiks9BorGNdXKrzM"
-os.environ["SMTP_PASSWORD"] = "9rzs8RfBQvT9xr87Mmr3"
-
-# 🔹 Загружаем переменные окружения
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
-
-# 🔹 Выводим значения для проверки
-print(f"Загруженный Telegram Token: {TELEGRAM_TOKEN}")
-print(f"Загруженный SMTP Password: {SMTP_PASSWORD}")
-
 app = Flask(__name__)
 
-# 🔹 ДАННЫЕ ДЛЯ ТЕЛЕГРАМА
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")  # Хранить в переменных окружения!
-
 # 🔹 ДАННЫЕ ДЛЯ EMAIL (Хранить в Railway Variables)
-SMTP_SERVER = "smtp.mail.ru"  # Используем Mail.ru
+SMTP_SERVER = "smtp.mail.ru"  
 SMTP_PORT = 587
-SMTP_LOGIN = "unityspace2024@mail.ru"  # Твоя почта
+SMTP_LOGIN = "unityspace2024@mail.ru"  
 SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")  # Пароль приложения
-JIVO_EMAIL = "idmurgpsfrtnjivosite@jivo-mail.com"  # Email-канал Jivo
+JIVO_EMAIL = "idmurgpsfrtnjivosite@jivo-mail.com"  
 
 @app.route('/telegram_webhook', methods=['POST'])
 def telegram_webhook():
@@ -34,7 +18,6 @@ def telegram_webhook():
     data = request.json
 
     if "message" in data:
-        chat_id = data["message"]["chat"]["id"]
         user_text = data["message"].get("text", "")
 
         # 🔹 Отправляем в Jivo
@@ -44,19 +27,28 @@ def telegram_webhook():
 
 def send_to_jivo_email(user_message):
     """Отправка сообщения в Jivo через Email"""
-    msg = MIMEText(f"🔔 Новый клиентский запрос:\n\n{user_message}")
-    msg["Subject"] = "🔹 Новый запрос из Telegram"
+    subject = "🔔 Новый клиентский запрос в Jivo"
+    email_body = f"📩 Новое сообщение от клиента:\n\n{user_message}"
+
+    msg = MIMEText(email_body, "plain", "utf-8")
+    msg["Subject"] = subject
     msg["From"] = SMTP_LOGIN
     msg["To"] = JIVO_EMAIL
+    msg["Reply-To"] = SMTP_LOGIN  # Добавляем, чтобы Jivo не игнорировал
 
     try:
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
             server.starttls()
             server.login(SMTP_LOGIN, SMTP_PASSWORD)
+
+            # 🔹 Логируем отправленное сообщение
+            print("🔹 Отправляем Email в Jivo...")
+            print(msg.as_string())
+
             server.sendmail(SMTP_LOGIN, JIVO_EMAIL, msg.as_string())
-        print("✅ Email отправлен в Jivo")
+        print("✅ Email успешно отправлен в Jivo!")
     except Exception as e:
-        print(f"🚨 Ошибка отправки Email: {str(e)}")
+        print(f"🚨 Ошибка при отправке Email: {str(e)}")
 
 if __name__ == '__main__':
     from waitress import serve
