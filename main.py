@@ -51,10 +51,11 @@ def send_welcome_message(chat_id):
     payload = {
         "chat_id": chat_id,
         "text": "Добро пожаловать! Выберите действие:",
+        "parse_mode": "HTML",
         "reply_markup": {
             "inline_keyboard": [
-                [{"text": "Частые вопросы", "callback_data": "faq"}],
-                [{"text": "Связаться с оператором", "callback_data": "ask_jivo"}]
+                [{"text": "📌 Частые вопросы", "callback_data": "faq"}],
+                [{"text": "📞 Связаться с оператором", "callback_data": "ask_jivo"}]
             ]
         }
     }
@@ -63,7 +64,7 @@ def send_welcome_message(chat_id):
 # Функция отправки сообщений в Telegram
 def send_message(chat_id, text):
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
-    payload = {"chat_id": chat_id, "text": text}
+    payload = {"chat_id": chat_id, "text": text, "parse_mode": "HTML"}
     requests.post(url, json=payload)
 
 # Функция отправки кнопки "Связаться с оператором"
@@ -72,8 +73,11 @@ def send_operator_button(chat_id):
     payload = {
         "chat_id": chat_id,
         "text": "Не нашли ответ? Свяжитесь с оператором.",
+        "parse_mode": "HTML",
         "reply_markup": {
-            "inline_keyboard": [[{"text": "Связаться с оператором", "callback_data": "ask_jivo"}]]
+            "inline_keyboard": [
+                [{"text": "📞 Связаться с оператором", "callback_data": "ask_jivo"}]
+            ]
         }
     }
     requests.post(url, json=payload)
@@ -85,4 +89,5 @@ def send_to_jivo(message):
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=5000)
+
 
