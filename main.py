@@ -88,6 +88,5 @@ def send_to_jivo(message):
     requests.post(JIVO_API_URL, json=payload)
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000)
-
-
+    from waitress import serve
+    serve(app, host="0.0.0.0", port=5000)
