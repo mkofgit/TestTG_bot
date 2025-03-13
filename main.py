@@ -14,7 +14,7 @@ TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")  # Хранить в перемен
 SMTP_SERVER = "smtp.mail.ru"  # Используем Mail.ru
 SMTP_PORT = 587
 SMTP_LOGIN = "unityspace2024@mail.ru"  # Твоя почта
-SMTP_PASSWORD = "rsxsbnlwbtsvilcu"  # Пароль приложения (НЕ обычный пароль!)
+SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")  # Пароль приложения
 JIVO_EMAIL = "idmurgpsfrtnjivosite@jivo-mail.com"  # Email-канал Jivo
 
 @app.route('/telegram_webhook', methods=['POST'])
