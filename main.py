@@ -14,7 +14,7 @@ ADMIN_CHAT_ID = -1001234567890  # ID группы операторов
 SMTP_SERVER = "smtp.mail.ru"  # Используем Mail.ru
 SMTP_PORT = 587
 SMTP_LOGIN = "unityspace2024@mail.ru"  # Твоя почта
-SMTP_PASSWORD = "ghjcnhfycndf2024"  # Пароль приложения (НЕ обычный пароль!)
+SMTP_PASSWORD = "rsxsbnlwbtsvilcu"  # Пароль приложения (НЕ обычный пароль!)
 JIVO_EMAIL = "idmurgpsfrtnjivosite@jivo-mail.com"  # Email-канал Jivo
 
 @app.route('/telegram_webhook', methods=['POST'])
