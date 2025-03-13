@@ -5,6 +5,7 @@ app = Flask(__name__)
 
 TELEGRAM_TOKEN = "7552421757:AAGgXf_YQ23TnoA8td1wiks9BorGNdXKrzM"
 JIVO_API_URL = "https://api.jivosite.com/webhooks"
+PROXY_SERVER_URL = "https://myproxy.up.railway.app/proxy"  # Замените на свой URL
 
 # Частые вопросы и автоответы
 FAQ = {
@@ -26,24 +27,51 @@ def telegram_webhook():
             send_welcome_message(chat_id)
             return jsonify({"status": "ok"})
         
-        # Если вопрос есть в FAQ, отправляем автоответ
         for keyword, answer in FAQ.items():
             if keyword in text:
                 send_message(chat_id, answer)
                 return jsonify({"status": "ok"})
         
-        # Если не нашли автоответ, предлагаем обратиться к оператору
         send_operator_button(chat_id)
     
-    # Обработка нажатия кнопки "Связаться с оператором"
     elif "callback_query" in data:
         if data["callback_query"]["data"] == "ask_jivo":
             chat_id = data["callback_query"]["message"]["chat"]["id"]
-            user_message = data["callback_query"]["message"]["text"]
-            send_to_jivo(user_message)
+            user_message = data["callback_query"]["message"].get("text", "Сообщение отсутствует")
+            send_to_jivo_proxy(chat_id, user_message)
             send_message(chat_id, "Ваш запрос отправлен оператору. Ожидайте ответа!")
     
     return jsonify({"status": "ok"})
+
+# Функция отправки сообщений в Telegram
+def send_message(chat_id, text):
+    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+    payload = {"chat_id": chat_id, "text": text, "parse_mode": "HTML"}
+    requests.post(url, json=payload)
+
+# Функция отправки кнопки "Связаться с оператором"
+def send_operator_button(chat_id):
+    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+    payload = {
+        "chat_id": chat_id,
+        "text": "Не нашли ответ? Свяжитесь с оператором.",
+        "reply_markup": {
+            "inline_keyboard": [[{"text": "📞 Связаться с оператором", "callback_data": "ask_jivo"}]]
+        }
+    }
+    requests.post(url, json=payload)
+
+# Функция отправки запроса в прокси-сервер для Jivo
+def send_to_jivo_proxy(user_id, message):
+    payload = {"message": message}
+    headers = {"Content-Type": "application/json"}
+    
+    try:
+        response = requests.post(PROXY_SERVER_URL, json=payload, headers=headers)
+        print(f"Отправлено в прокси: {payload}")
+        print(f"Ответ прокси: {response.status_code}, {response.text}")
+    except Exception as e:
+        print(f"Ошибка отправки в прокси: {str(e)}")
 
 # Функция отправки приветственного сообщения с кнопками
 def send_welcome_message(chat_id):
@@ -60,54 +88,6 @@ def send_welcome_message(chat_id):
         }
     }
     requests.post(url, json=payload)
-
-# Функция отправки сообщений в Telegram
-def send_message(chat_id, text):
-    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
-    payload = {"chat_id": chat_id, "text": text, "parse_mode": "HTML"}
-    requests.post(url, json=payload)
-
-# Функция отправки кнопки "Связаться с оператором"
-def send_operator_button(chat_id):
-    url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
-    payload = {
-        "chat_id": chat_id,
-        "text": "Не нашли ответ? Свяжитесь с оператором.",
-        "parse_mode": "HTML",
-        "reply_markup": {
-            "inline_keyboard": [
-                [{"text": "📞 Связаться с оператором", "callback_data": "ask_jivo"}]
-            ]
-        }
-    }
-    requests.post(url, json=payload)
-
-# Функция отправки сообщений в Jivo
-import json
-
-def send_to_jivo(message):
-    headers = {
-        "Content-Type": "application/json"
-    }
-    payload = {
-        "event_name": "chat_accepted",
-        "data": {
-            "visitor": {
-                "name": "Telegram User",
-                "phone": "N/A",
-                "email": "N/A"
-            },
-            "message": message
-        }
-    }
-    
-    try:
-        response = requests.post(JIVO_API_URL, json=payload, headers=headers)
-        response_data = response.json() if response.status_code == 200 else response.text
-        print(f"Отправлено в Jivo: {json.dumps(payload, ensure_ascii=False)}")
-        print(f"Ответ Jivo: {response.status_code}, {response_data}")
-    except Exception as e:
-        print(f"Ошибка отправки в Jivo: {str(e)}")
 
 if __name__ == '__main__':
     from waitress import serve
